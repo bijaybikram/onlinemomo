@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { connectDatabase } = require("./database/database");
 const User = require("./model/userModel");
 // Telling node to use DOTENV file
@@ -69,8 +70,12 @@ app.post("/login", async (req, res) => {
   //   Password check
   const isMatched = bcrypt.compareSync(password, userFound[0].userPassowrd);
   if (isMatched) {
+    const token = jwt.sign({ id: userFound[0]._id }, process.env.SECRET_KEY, {
+      expiresIn: "30d",
+    });
     res.status(200).json({
       message: "User logged in succesfully!",
+      token,
     });
   } else {
     res.status(400).json({
