@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const { connectDatabase } = require("./database/database");
-const { registerUser, loginUser } = require("./controller/authController");
 // use DOTENV file
 require("dotenv").config();
 // importing ROUTES HERE
