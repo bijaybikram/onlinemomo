@@ -14,7 +14,7 @@ const userSchema = new Schema({
     type: Number,
     required: [true, "Phone number must be provided"],
   },
-  userPassowrd: {
+  userPassword: {
     type: String,
     required: [true, "Password must be provided!"],
   },

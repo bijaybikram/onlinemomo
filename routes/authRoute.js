@@ -2,6 +2,8 @@ const {
   registerUser,
   loginUser,
   forgotPassword,
+  verifyOtp,
+  resetPassword,
 } = require("../controller/authController");
 
 const router = require("express").Router();
@@ -9,6 +11,8 @@ const router = require("express").Router();
 // route to register and login
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
-router.route("/forgotpassword").post(forgotPassword);
+router.route("/forgotPassword").post(forgotPassword);
+router.route("/verifyOtp").post(verifyOtp);
+router.route("/resetPassword").post(resetPassword);
 
 module.exports = router;

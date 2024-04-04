@@ -27,7 +27,7 @@ exports.registerUser = async (req, res) => {
       userEmail: email,
       userName: userName,
       userPhonenumber: phoneNumber,
-      userPassowrd: bcrypt.hashSync(password, 10),
+      userPassword: bcrypt.hashSync(password, 10),
       userRole: role,
     });
     res.status(201).json({
@@ -54,7 +54,7 @@ exports.loginUser = async (req, res) => {
     });
   }
   // Check if the passwords match
-  const isMatched = bcrypt.compareSync(password, userFound[0].userPassowrd);
+  const isMatched = bcrypt.compareSync(password, userFound[0].userPassword);
   if (isMatched) {
     const token = jwt.sign({ id: userFound[0]._id }, process.env.SECRET_KEY, {
       expiresIn: "30d",
@@ -109,7 +109,72 @@ exports.forgotPassword = async (req, res) => {
   });
 };
 
-// exports.handleOtp = async (req, res) => {
-//   const { otp } = req.body;
-//   const email = req.params.id;
-// };
+exports.verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) {
+    return res.status(400).json({
+      message: "Please provide both the email and otp!",
+    });
+  }
+
+  // double verify the otp and email relation
+  const userExist = await User.find({
+    userEmail: email,
+  });
+  if (userExist.length == 0) {
+    return res.status(404).json({
+      message: "Email is not registered.",
+    });
+  }
+
+  if (userExist[0].otp !== otp) {
+    res.status(400).json({
+      message: "Invalid OTP",
+    });
+  } else {
+    const currentTime = Date.now();
+    if (currentTime - userExist[0].otpGeneratedTime <= 120000) {
+      res.status(200).json({
+        message: "OTP verified!",
+      });
+      userExist[0].otp = null;
+      userExist[0].otpGeneratedTime = null;
+      userExist[0].save();
+    } else {
+      res.status(400).json({
+        message: "OTP timed out!",
+      });
+    }
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { email, newPassword, confirmNewPassword } = req.body;
+  if (!email || !newPassword || !confirmNewPassword) {
+    return req.status(400).json({
+      message: "Please provide email, newpassword & confirmnewpassword.",
+    });
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    return res.status(400).json({
+      message: "newpassword and confirmnewpassword donot match!",
+    });
+  }
+
+  // check if the User exists or not
+  const userExist = await User.find({
+    userEmail: email,
+  });
+  if (userExist.length == 0) {
+    return res.status(404).json({
+      message: "Email is not registered!",
+    });
+  }
+
+  userExist[0].userPassword = bcrypt.hashSync(newPassword, 10);
+  userExist[0].save();
+  res.status(200).json({
+    message: "Password changed succesfully!",
+  });
+};
