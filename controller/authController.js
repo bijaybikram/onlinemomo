@@ -139,6 +139,7 @@ exports.verifyOtp = async (req, res) => {
       });
       userExist[0].otp = null;
       userExist[0].otpGeneratedTime = null;
+      userExist[0].isOtpVerified = true;
       userExist[0].save();
     } else {
       res.status(400).json({
@@ -172,7 +173,13 @@ exports.resetPassword = async (req, res) => {
     });
   }
 
+  if (userExist[0].isOtpVerified !== true) {
+    return res.status(400).json({
+      message: "Password already changed!",
+    });
+  }
   userExist[0].userPassword = bcrypt.hashSync(newPassword, 10);
+  userExist[0].isOtpVerified = false;
   userExist[0].save();
   res.status(200).json({
     message: "Password changed succesfully!",
