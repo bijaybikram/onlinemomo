@@ -4,7 +4,7 @@ const {
   forgotPassword,
   verifyOtp,
   resetPassword,
-} = require("../controller/authController");
+} = require("../controller/auth/authController");
 
 const router = require("express").Router();
 

@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const otpgenerator = require("otp-generator");
-const User = require("../model/userModel");
-const sendEmail = require("../services/sendEmail");
+const User = require("../../model/userModel");
+const sendEmail = require("../../services/sendEmail");
 require("dotenv").config();
 
 // Register the user ------------------>
