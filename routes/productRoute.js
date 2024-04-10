@@ -1,5 +1,7 @@
 const {
   createProduct,
+  getProducts,
+  getProduct,
 } = require("../controller/admin/product/productController");
 const isAuthenticated = require("../middleware/isAuthenticated");
 const restrictTo = require("../middleware/restrictTo");
@@ -16,6 +18,9 @@ router
     restrictTo("admin"),
     upload.single("productImage"),
     createProduct
-  );
+  )
+  .get(getProducts);
+
+router.route("/products/:id").get(getProduct);
 
 module.exports = router;
