@@ -4,6 +4,10 @@ const { connectDatabase } = require("./database/database");
 // use DOTENV file
 require("dotenv").config();
 
+//node js lai file access garna dey vaneko
+app.use(express.static("public"));
+app.use(express.static("uploads/"));
+
 // importing ROUTES HERE
 const authRoute = require("./routes/authRoute");
 const productRoute = require("./routes/productRoute");
