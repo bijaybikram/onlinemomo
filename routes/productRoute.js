@@ -8,6 +8,7 @@ const restrictTo = require("../middleware/restrictTo");
 
 const router = require("express").Router();
 const { multer, storage } = require("../middleware/multerConfig");
+const catchAsync = require("../services/catchAsync");
 const upload = multer({ storage: storage });
 
 // route to create a product
@@ -17,10 +18,10 @@ router
     isAuthenticated,
     restrictTo("admin"),
     upload.single("productImage"),
-    createProduct
+    catchAsync(createProduct)
   )
-  .get(getProducts);
+  .get(catchAsync(getProducts));
 
-router.route("/products/:id").get(getProduct);
+router.route("/products/:id").get(catchAsync(getProduct));
 
 module.exports = router;
