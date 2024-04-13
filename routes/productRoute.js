@@ -2,6 +2,7 @@ const {
   createProduct,
   getProducts,
   getProduct,
+  deleteProduct,
 } = require("../controller/admin/product/productController");
 const isAuthenticated = require("../middleware/isAuthenticated");
 const restrictTo = require("../middleware/restrictTo");
@@ -22,6 +23,9 @@ router
   )
   .get(catchAsync(getProducts));
 
-router.route("/products/:id").get(catchAsync(getProduct));
+router
+  .route("/products/:id")
+  .get(catchAsync(getProduct))
+  .post(isAuthenticated, restrictTo("admin"), catchAsync(deleteProduct));
 
 module.exports = router;

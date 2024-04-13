@@ -82,3 +82,18 @@ exports.getProduct = async (req, res) => {
     product, // destructured since we are using same name
   });
 };
+
+exports.deleteProduct = async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  if (!id) {
+    return res.status(400).json({
+      message: "Please provide ID!",
+    });
+  }
+
+  await Product.findByIdAndDelete(id);
+  res.status(200).json({
+    message: "Product deleted succesfully!",
+  });
+};
