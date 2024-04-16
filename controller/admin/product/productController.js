@@ -87,12 +87,19 @@ exports.getProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
   console.log(id);
+  const oldData = await Product.findById(id);
   if (!id) {
     return res.status(400).json({
       message: "Please provide ID!",
     });
   }
-
+  fs.unlink(`uploads/${oldData.productImage}`, (err) => {
+    if (err) {
+      console.log("Error deleting the file from file system");
+    } else {
+      console.log("File deleted succesfully!");
+    }
+  });
   await Product.findByIdAndDelete(id);
   res.status(200).json({
     message: "Product deleted succesfully!",
