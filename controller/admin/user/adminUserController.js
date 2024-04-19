@@ -9,7 +9,13 @@ exports.getUsers = async (req, res) => {
   // );
   const { id } = req.user; // this is sent with the userExist value from isAuthenticated after the function invoke completes
   // console.log(req.user);
-  const users = await User.find({ _id: { $ne: id } }).select(["-__v"]);
+  const users = await User.find({ _id: { $ne: id } }).select([
+    "-__v",
+    "-otp",
+    "-userPassword",
+    "-otpGeneratedTime",
+    "-isOtpVerified",
+  ]);
   // OR an Easy alternative but longer one
   // const users = (await User.find().select(["-__v"])).filter(
   //   (user) => user._id.toString() !== id

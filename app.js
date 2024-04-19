@@ -12,6 +12,7 @@ app.use(express.static("uploads/"));
 const authRoute = require("./routes/authRoute");
 const productRoute = require("./routes/productRoute");
 const userRoute = require("./routes/adminUserRoute");
+const userReviewRoute = require("./routes/userReviewRoute");
 
 // parse JSON values
 app.use(express.json());
@@ -23,6 +24,7 @@ connectDatabase(process.env.MONGO_URI);
 app.use("/api", authRoute);
 app.use("/api", productRoute);
 app.use("/api", userRoute);
+app.use("/api", userReviewRoute);
 
 // listening to the port
 const PORT = process.env.PORT;

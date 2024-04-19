@@ -48,6 +48,14 @@ exports.createProduct = async (req, res) => {
 
 // API to get products
 exports.getProducts = async (req, res) => {
+  // Alternate to make reviews attached with product using schema model
+  // const products = await Product.find().populate({
+  //   path: "reviews",
+  //   populate: {
+  //     path: "userId",
+  //     select: "userName userEmail",
+  //   },
+  // });
   const products = await Product.find();
   if (products.length == 0) {
     res.status(400).json({

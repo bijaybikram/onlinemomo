@@ -1,7 +1,7 @@
 const {
   getUsers,
   deleteUser,
-} = require("../controller/admin/user/userController");
+} = require("../controller/admin/user/adminUserController");
 const isAuthenticated = require("../middleware/isAuthenticated");
 const catchAsync = require("../services/catchAsync");
 const restrictTo = require("../middleware/restrictTo");

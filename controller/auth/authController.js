@@ -47,7 +47,7 @@ exports.loginUser = async (req, res) => {
   // check if user exist or not
   const userFound = await User.find({
     userEmail: email,
-  });
+  }).select(["+userPassword"]);
   if (userFound.length == 0) {
     return res.status(401).json({
       message: "User with that email is not registered!",
