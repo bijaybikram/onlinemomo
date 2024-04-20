@@ -1,5 +1,5 @@
-const Product = require("../../model/productModel");
-const Review = require("../../model/reviewModel");
+const Product = require("../../../model/productModel");
+const Review = require("../../../model/reviewModel");
 
 exports.createReview = async (req, res) => {
   const productId = req.params.id;
@@ -33,29 +33,17 @@ exports.createReview = async (req, res) => {
   });
 };
 
-exports.getProductReview = async (req, res) => {
-  const productId = req.params.id;
-  if (!productId) {
-    return res.status(400).json({
-      message: "Please provide Product Id",
-    });
-  }
-  const productExist = await Product.findById(productId);
-  // Check if that product exist or not
-  if (!productExist) {
-    return res.status(404).json({
-      message: "Product with that Id doesnot exist",
-    });
-  }
-  const reviews = await Review.find({ productId }).populate("userId");
+exports.getMyReviews = async () => {
+  const userId = req.user.id;
+  const reviews = await Review.find({ userId });
   if (reviews.length == 0) {
     res.status(404).json({
-      message: "No user review found.",
+      message: "Yo have not reviewed any Product!",
       data: [],
     });
   } else {
     res.status(200).json({
-      message: "Review fetched succesfully.",
+      message: "Reviews fetched succesfully!",
       data: reviews,
     });
   }
@@ -63,9 +51,18 @@ exports.getProductReview = async (req, res) => {
 
 exports.deleteReview = async (req, res) => {
   const reviewId = req.params.id;
+  const userId = req.user.id;
+  const review = await Review.findById(reviewId);
+  const ownerIdOfReview = review.userId;
+
   if (!reviewId) {
     return res.status(400).json({
       message: "Please provide the reviewId",
+    });
+  }
+  if (ownerIdOfReview !== userId) {
+    return res.status(400).json({
+      message: "You don't have permission to delete this review!",
     });
   }
   await Review.findByIdAndDelete(reviewId);
@@ -74,7 +71,7 @@ exports.deleteReview = async (req, res) => {
   });
 };
 
-//Alternate way of add reviews using mongodb feature instead of JS CRUD feature
+//Alternate way of adding reviews using mongodb feature instead of JS CRUD feature
 
 // exports.addProductReview = async (req, res) => {
 //   const userId = req.user.id;

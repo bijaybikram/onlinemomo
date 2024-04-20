@@ -46,52 +46,6 @@ exports.createProduct = async (req, res) => {
   });
 };
 
-// API to get products
-exports.getProducts = async (req, res) => {
-  // Alternate to make reviews attached with product using schema model
-  // const products = await Product.find().populate({
-  //   path: "reviews",
-  //   populate: {
-  //     path: "userId",
-  //     select: "userName userEmail",
-  //   },
-  // });
-  const products = await Product.find();
-  if (products.length == 0) {
-    res.status(400).json({
-      message: "No product found!",
-      products: [],
-    });
-  } else {
-    res.status(200).json({
-      message: "Products fetched succesfully!",
-      products: products,
-    });
-  }
-};
-
-// API to fetch a single product
-exports.getProduct = async (req, res) => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(400).json({
-      mesasge: "please provide the product id",
-    });
-  }
-  const product = await Product.findById(id);
-  // check if the product is available or not
-  if (!product) {
-    return res.status(400).json({
-      message: "Product not found!",
-      product: [],
-    });
-  }
-  res.status(200).json({
-    message: "Product fetched succesfully!",
-    product, // destructured since we are using same name
-  });
-};
-
 exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
   console.log(id);
@@ -178,6 +132,35 @@ exports.editProduct = async (req, res) => {
   );
   res.status(200).json({
     message: "Product updated succesfully!",
-    datas,
+    data: datas,
   });
 };
+
+// API to get product reviews
+// exports.getProductReview = async (req, res) => {
+//   const productId = req.params.id;
+//   if (!productId) {
+//     return res.status(400).json({
+//       message: "Please provide Product Id",
+//     });
+//   }
+//   const productExist = await Product.findById(productId);
+//   // Check if that product exist or not
+//   if (!productExist) {
+//     return res.status(404).json({
+//       message: "Product with that Id doesnot exist",
+//     });
+//   }
+//   const reviews = await Review.find({ productId }).populate("userId");
+//   if (reviews.length == 0) {
+//     res.status(404).json({
+//       message: "No user review found.",
+//       reviews: [],
+//     });
+//   } else {
+//     res.status(200).json({
+//       message: "Review fetched succesfully.",
+//       reviews,
+//     });
+//   }
+// };

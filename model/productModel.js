@@ -28,7 +28,7 @@ const productSchema = new Schema(
       type: String,
       // required: [true, "Product Image must be provided!"],
     },
-    reviews: [nextReviewSchema],
+    // reviews: [nextReviewSchema],
   },
   {
     timestamps: true,
