@@ -37,7 +37,8 @@ exports.getMyCartItems = async (req, res) => {
 };
 
 exports.deleteMyCartItem = async (req, res) => {
-  const { productId } = req.params;
+  //   const { productId } = req.params;  // use params for deleting a single product from cart implementing filter on the cart data
+  const { productIds } = req.body;
   // check if that product exist or not
   const product = await Product.findById(productId);
   if (!product) {
@@ -47,7 +48,10 @@ exports.deleteMyCartItem = async (req, res) => {
   }
   const userId = req.user.id;
   const user = await User.findById(userId);
-  user.cart = user.cart.filter((pId) => pId != productId);
+  productIds.forEach((productId) => {
+    user.cart = user.cart.filter((pId) => pId != productId);
+  });
+
   await user.save();
   res.status(200).json({
     message: "Cart Item removed successfully!",
