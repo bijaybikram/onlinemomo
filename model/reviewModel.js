@@ -7,12 +7,12 @@ const Schema = mongoose.Schema;
 const reviewSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
-    ref: User,
+    ref: "User",
     required: [true, "A review must belong to user."],
   },
   productId: {
     type: Schema.Types.ObjectId,
-    ref: Product,
+    ref: "Product",
     required: [true, "A review must be of Product."],
   },
   rating: {
