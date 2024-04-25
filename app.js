@@ -15,6 +15,8 @@ const userRoute = require("./routes/admin/adminUserRoute");
 const userReviewRoute = require("./routes/user/userReviewRoute");
 const profileRoute = require("./routes/user/profileRoute");
 const cartRoute = require("./routes/user/cartRoute");
+const userOrderRoute = require("./routes/user/orderRoute");
+const adminOrderRoute = require("./routes/admin/orderRoute");
 
 // parse JSON values
 app.use(express.json());
@@ -25,10 +27,12 @@ connectDatabase(process.env.MONGO_URI);
 // calling ROUTES here
 app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
-app.use("/api/admin", userRoute);
+app.use("/api/admin", userRoute, adminOrderRoute);
 app.use("/api/reviews", userReviewRoute);
 app.use("/api/profile", profileRoute);
 app.use("/api/cart", cartRoute);
+app.use("/api/orders", userOrderRoute);
+// app.use("/api/admin/", userOrderRoute);
 
 // listening to the port
 const PORT = process.env.PORT;
