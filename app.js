@@ -17,6 +17,7 @@ const profileRoute = require("./routes/user/profileRoute");
 const cartRoute = require("./routes/user/cartRoute");
 const userOrderRoute = require("./routes/user/orderRoute");
 const adminOrderRoute = require("./routes/admin/orderRoute");
+const paymentRoute = require("./routes/user/paymentRoute");
 
 // parse JSON values
 app.use(express.json());
@@ -33,8 +34,15 @@ app.use("/api/profile", profileRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/orders", userOrderRoute);
 app.use("/api/admin/orders", adminOrderRoute);
+app.use("/api/payment", paymentRoute);
 // app.use("/api/admin/", userOrderRoute);
 
+// Landing page of server
+app.get("/", (req, res) => {
+  res.json({
+    message: "Hey I am alive!",
+  });
+});
 // listening to the port
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
