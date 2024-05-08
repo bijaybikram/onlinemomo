@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 const { connectDatabase } = require("./database/database");
+
+const { Server } = require("socket.io");
+
 // use DOTENV file
 require("dotenv").config();
 
@@ -19,6 +22,11 @@ const userOrderRoute = require("./routes/user/orderRoute");
 const adminOrderRoute = require("./routes/admin/orderRoute");
 const paymentRoute = require("./routes/user/paymentRoute");
 
+app.set("view engine", "ejs");
+
+app.get("/chat", (req, res) => {
+  res.render("home");
+});
 // parse JSON values
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -45,6 +53,13 @@ app.get("/", (req, res) => {
 });
 // listening to the port
 const PORT = process.env.PORT;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server started at PORT ${PORT}`);
+});
+
+const io = new Server(server);
+io.on("connection", (socket) => {
+  socket.on("hello", (data) => {
+    console.log(data);
+  });
 });
