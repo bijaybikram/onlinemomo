@@ -2,10 +2,10 @@ const express = require("express");
 const app = express();
 const { connectDatabase } = require("./database/database");
 
-const { Server } = require("socket.io");
+// const { Server } = require("socket.io");
+const cors = require("cors");
 
 // use DOTENV file
-require("dotenv").config();
 
 //node js lai file access garna dey vaneko
 app.use(express.static("public"));
@@ -21,6 +21,15 @@ const cartRoute = require("./routes/user/cartRoute");
 const userOrderRoute = require("./routes/user/orderRoute");
 const adminOrderRoute = require("./routes/admin/orderRoute");
 const paymentRoute = require("./routes/user/paymentRoute");
+const User = require("./model/userModel");
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+// Tell Node to use dotenv
+require("dotenv").config();
 
 app.set("view engine", "ejs");
 
@@ -55,11 +64,4 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT;
 const server = app.listen(PORT, () => {
   console.log(`Server started at PORT ${PORT}`);
-});
-
-const io = new Server(server);
-io.on("connection", (socket) => {
-  socket.on("hello", (data) => {
-    console.log(data);
-  });
 });

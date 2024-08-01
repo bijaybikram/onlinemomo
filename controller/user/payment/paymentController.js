@@ -57,6 +57,7 @@ exports.verifyPidx = async (req, res) => {
     order[0].paymentDetails.method = "khalti";
     order[0].paymentDetails.paymentStatus = "paid";
     await order[0].save();
+
     // notify to front-end
     res.redirect("http://localhost:3000");
   } else {
