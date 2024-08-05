@@ -22,18 +22,18 @@ exports.registerUser = async (req, res) => {
     res.status(400).json({
       message: "User with that email is already registered!",
     });
-  } else {
-    await User.create({
-      userEmail: email,
-      userName: userName,
-      userPhonenumber: phoneNumber,
-      userPassword: bcrypt.hashSync(password, 10),
-      userRole: role,
-    });
-    res.status(201).json({
-      message: "User succesfully registered!",
-    });
   }
+  const userData = await User.create({
+    userEmail: email,
+    userName: userName,
+    userPhonenumber: phoneNumber,
+    userPassword: bcrypt.hashSync(password, 10),
+    userRole: role,
+  });
+  res.status(201).json({
+    message: "User succesfully registered!",
+    data: userData,
+  });
 };
 
 // Login the user -------------------->
