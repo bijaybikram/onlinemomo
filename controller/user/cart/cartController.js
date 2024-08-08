@@ -5,22 +5,46 @@ exports.addToCart = async (req, res) => {
   const userId = req.user.id;
   const { productId } = req.params;
   if (!productId) {
-    res.status(400).json({
-      message: "Please provide productId.",
+    return res.status(400).json({
+      message: "Please provide productId and quantity.",
     });
   }
   const productExist = await Product.findById(productId);
   if (!productExist) {
-    res.status(404).json({
+    return res.status(404).json({
       message: "No product exist with that productId.",
     });
   }
+
   const user = await User.findById(userId);
-  user.cart.push(productId);
+  // console.log(userId);
+
+  // check if that productId already exist or not , yeti xa vaney qty matra badaunu paryo na vaye productId
+  const existingCartItem = user.cart.find((item) => {
+    console.log(item.product);
+    return item.product && item.product.equals(productId);
+  });
+
+  if (existingCartItem) {
+    existingCartItem.quantity += 1;
+  } else {
+    user.cart.push({
+      quantity: 1,
+      product: productId,
+    });
+  }
+  // Ensure all cart items have a quantity
+  // user.cart.forEach((item) => {
+  //   if (!item.quantity) {
+  //     item.quantity = 1;
+  //   }
+  // });
+
   await user.save();
+  const updatedUser = await User.findById(userId).populate("cart.product");
   res.status(200).json({
     message: "Product added to cart succesfully!",
-    data: user.cart,
+    data: updatedUser.cart,
   });
 };
 
