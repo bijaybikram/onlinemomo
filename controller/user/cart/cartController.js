@@ -51,7 +51,7 @@ exports.addToCart = async (req, res) => {
 exports.getMyCartItems = async (req, res) => {
   const userId = req.user.id;
   const userData = await User.findById(userId).populate({
-    path: "cart",
+    path: "cart.product",
     select: "-productStatus",
   });
   res.status(200).json({
@@ -61,8 +61,8 @@ exports.getMyCartItems = async (req, res) => {
 };
 
 exports.deleteMyCartItem = async (req, res) => {
-  //   const { productId } = req.params;  // use params for deleting a single product from cart implementing filter on the cart data
-  const { productIds } = req.body;
+  const { productId } = req.params; // use params for deleting a single product from cart implementing filter on the cart data
+  // const { productIds } = req.body;
   // check if that product exist or not
   const product = await Product.findById(productId);
   if (!product) {
@@ -72,13 +72,37 @@ exports.deleteMyCartItem = async (req, res) => {
   }
   const userId = req.user.id;
   const user = await User.findById(userId);
-  productIds.forEach((productId) => {
-    user.cart = user.cart.filter((pId) => pId != productId);
-  });
+  // productIds.forEach((productId) => {
+  //   user.cart = user.cart.filter((pId) => pId != productId);
+  // });
+  user.cart = user.cart.filter((item) => item.product != productId);
 
   await user.save();
   res.status(200).json({
     message: "Cart Item removed successfully!",
+    data: user.cart,
+  });
+};
+
+exports.updateCartItems = async (req, res) => {
+  const userId = req.user.id;
+  const { productId } = req.params;
+  const { quantity } = req.body;
+
+  const user = await User.findById(userId);
+  // console.log(user);
+  const cartItem = user.cart.find((item) => item.product.equals(productId));
+  if (!cartItem) {
+    return res.status(404).json({
+      message: "No item with that Id",
+    });
+  }
+
+  cartItem.quantity = quantity;
+  await user.save();
+
+  res.status(200).json({
+    message: "Item updated successfully",
     data: user.cart,
   });
 };

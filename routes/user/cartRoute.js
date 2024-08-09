@@ -2,6 +2,7 @@ const {
   addToCart,
   getMyCartItems,
   deleteMyCartItem,
+  updateCartItems,
 } = require("../../controller/user/cart/cartController");
 const isAuthenticated = require("../../middleware/isAuthenticated");
 const restrictTo = require("../../middleware/restrictTo");
@@ -13,10 +14,7 @@ router.route("/").get(isAuthenticated, catchAsync(getMyCartItems));
 router
   .route("/:productId")
   .post(isAuthenticated, restrictTo("customer"), catchAsync(addToCart))
-  .delete(
-    isAuthenticated,
-    restrictTo("customer"),
-    catchAsync(deleteMyCartItem)
-  );
+  .delete(isAuthenticated, restrictTo("customer"), catchAsync(deleteMyCartItem))
+  .patch(isAuthenticated, restrictTo("customer"), catchAsync(updateCartItems));
 
 module.exports = router;
