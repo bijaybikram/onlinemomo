@@ -1,5 +1,6 @@
 const { default: axios } = require("axios");
 const Order = require("../../../model/orderSchema");
+const User = require("../../../model/userModel");
 
 exports.initiateKhaltiPayment = async (req, res) => {
   const { orderId, amount } = req.body;
@@ -9,19 +10,26 @@ exports.initiateKhaltiPayment = async (req, res) => {
     });
   }
 
-  const orderExists = Order.findById(orderId);
-  if (!orderExists) {
+  let order = await Order.findById(orderId);
+  if (!order) {
     res.status(404).json({
       message: "Order with that Id doesnot exist.",
     });
   }
 
+  // Check if the coming amount is total amount of the order
+  if (order.totalAmount !== amount) {
+    res.status(400).json({
+      message: "Amount must be equal to total amount of the order!",
+    });
+  }
+
   const data = {
-    return_url: "http://localhost:3000/api/payment/success",
+    return_url: "http://localhost:5173/khaltisuccess",
     purchase_order_id: orderId,
-    purchase_order_name: "testName_" + orderId,
-    amount: amount,
+    amount: amount * 100,
     website_url: "http://localhost:3000/",
+    purchase_order_name: "testName_" + orderId,
   };
 
   const response = await axios.post(
@@ -34,14 +42,17 @@ exports.initiateKhaltiPayment = async (req, res) => {
     }
   );
   console.log(response.data);
-  let order = await Order.findById(orderId);
   order.paymentDetails.pidx = response.data.pidx;
   await order.save();
-  res.redirect(response.data.payment_url);
+  res.status(200).json({
+    message: "Payment Succesful!",
+    paymentUrl: response.data.payment_url,
+  });
 };
 
 exports.verifyPidx = async (req, res) => {
-  const { pidx } = req.query;
+  const userId = req.user.id;
+  const pidx = req.body.pidx;
   const response = await axios.post(
     "https://a.khalti.com/api/v2/epayment/lookup/",
     { pidx },
@@ -51,18 +62,25 @@ exports.verifyPidx = async (req, res) => {
       },
     }
   );
-  if (response.data.status == "Completed") {
+  // console.log(response);
+  if (response.data.status === "Completed") {
     // modification on database
     let order = await Order.find({ "paymentDetails.pidx": pidx });
+    if (!order) {
+      res.status(404).json({
+        message: "Order not found for the given pidx!",
+      });
+    }
     order[0].paymentDetails.method = "khalti";
     order[0].paymentDetails.paymentStatus = "paid";
     await order[0].save();
+    // console.log(order[0]);
 
-    // notify to front-end
-    res.redirect("http://localhost:3000");
-  } else {
-    // notify error to front-end
-    res.redirect("http://localhost:3000/errorPage");
+    // empty user cart
+    await User.findByIdAndUpdate(userId, { $set: { cart: [] } });
+
+    res.status(200).json({
+      message: "Payment Verified succesfully!",
+    });
   }
-  // res.send(response.data);
 };
