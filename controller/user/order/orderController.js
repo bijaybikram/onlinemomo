@@ -1,4 +1,5 @@
 const Order = require("../../../model/orderSchema");
+const User = require("../../../model/userModel");
 
 exports.createMyOrder = async (req, res) => {
   const userId = req.user.id;
@@ -25,6 +26,11 @@ exports.createMyOrder = async (req, res) => {
     phoneNumber,
     paymentDetails,
   });
+  if (createdOrder.paymentDetails.method === "COD") {
+    // empty user cart
+
+    await User.findByIdAndUpdate(userId, { $set: { cart: [] } });
+  }
   res.status(200).json({
     data: createdOrder,
     message: "Order placed Succesfully",
