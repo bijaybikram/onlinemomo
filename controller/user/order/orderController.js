@@ -124,6 +124,13 @@ exports.deleteMyOrder = async (req, res) => {
     });
   }
 
+  if (!["pending", "cancelled"].includes(order.orderStatus)) {
+    return res.status(400).json({
+      message:
+        "You cannot cancel this order as it is not on the pending state.",
+    });
+  }
+
   await Order.findByIdAndDelete(id);
   res.status(200).json({
     message: "Order deleted Succesfully",
@@ -142,6 +149,8 @@ exports.cancelMyOrder = async (req, res) => {
       message: "The order with this Id donot exist!",
     });
   }
+  console.log(order);
+  console.log(userId);
 
   if (order.user.toString() !== userId) {
     return res.status(400).json({
@@ -149,7 +158,7 @@ exports.cancelMyOrder = async (req, res) => {
     });
   }
 
-  if (existingOrder.orderStatus !== "pending") {
+  if (order.orderStatus !== "pending") {
     return res.status(400).json({
       message:
         "You cannot cancel this order as it is not on the pending state.",
