@@ -73,7 +73,23 @@ exports.updateOrderStatus = async (req, res) => {
     {
       new: true,
     }
-  );
+  )
+    .populate({
+      path: "items.product",
+      model: "Product",
+      select: [
+        "-productStockQuantity",
+        "-createdAt",
+        "-updatedAt",
+        "-__v",
+        "-reviews",
+      ],
+    })
+    .populate({
+      path: "user",
+      model: "User",
+      select: ["userName", "userPhonenumber", "userRole", "userEmail"],
+    });
   res.status(200).json({
     message: "Order status updated succesfully",
     data: updatedOrder,
