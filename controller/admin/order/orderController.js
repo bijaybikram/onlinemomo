@@ -1,17 +1,23 @@
 const Order = require("../../../model/orderSchema");
 
 exports.getAllOrders = async (req, res) => {
-  const orders = await Order.find().populate({
-    path: "items.product",
-    model: "Product",
-    select: [
-      "-productStockQuantity",
-      "-createdAt",
-      "-updatedAt",
-      "-__v",
-      "-reviews",
-    ],
-  });
+  const orders = await Order.find()
+    .populate({
+      path: "items.product",
+      model: "Product",
+      select: [
+        "-productStockQuantity",
+        "-createdAt",
+        "-updatedAt",
+        "-__v",
+        "-reviews",
+      ],
+    })
+    .populate({
+      path: "user",
+      model: "User",
+      select: ["userName", "userPhonenumber", "userRole", "userEmail"],
+    });
   if (orders.length == 0) {
     return res.status(404).json({
       message: "No orders found!",
