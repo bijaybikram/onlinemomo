@@ -3,6 +3,7 @@ const {
   getSingleOrder,
   updateOrderStatus,
   deleteOrder,
+  updatePaymentStatus,
 } = require("../../controller/admin/order/orderController");
 const isAuthenticated = require("../../middleware/isAuthenticated");
 const restrictTo = require("../../middleware/restrictTo");
@@ -13,6 +14,10 @@ const router = require("express").Router();
 router
   .route("/")
   .get(isAuthenticated, restrictTo("admin"), catchAsync(getAllOrders));
+
+router
+  .route("/paymentstatus/:id")
+  .patch(isAuthenticated, restrictTo("admin"), catchAsync(updatePaymentStatus));
 
 router
   .route("/:id")

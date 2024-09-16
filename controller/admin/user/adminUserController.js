@@ -38,7 +38,7 @@ exports.deleteUser = async (req, res) => {
   const userId = req.params.id;
 
   if (!userId) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "Please provide user ID",
     });
   }

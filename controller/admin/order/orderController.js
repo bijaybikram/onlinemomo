@@ -95,6 +95,53 @@ exports.updateOrderStatus = async (req, res) => {
     data: updatedOrder,
   });
 };
+exports.updatePaymentStatus = async (req, res) => {
+  const { id } = req.params;
+  const { paymentStatus } = req.body;
+  if (
+    !paymentStatus ||
+    !["pending", "paid", "unpaid"].includes(paymentStatus.toLowerCase())
+  ) {
+    return res.status(400).json({
+      message: "Please provide valid payment status!",
+    });
+  }
+  // finding order
+  const order = await Order.findById(id);
+  if (!order) {
+    return res.status(404).json({
+      message: "The order with this Id donot exist!",
+    });
+  }
+
+  const updatedOrder = await Order.findByIdAndUpdate(
+    id,
+    { "paymentDetails.paymentStatus": paymentStatus },
+    {
+      new: true,
+    }
+  )
+    .populate({
+      path: "items.product",
+      model: "Product",
+      select: [
+        "-productStockQuantity",
+        "-createdAt",
+        "-updatedAt",
+        "-__v",
+        "-reviews",
+      ],
+    })
+    .populate({
+      path: "user",
+      model: "User",
+      select: ["userName", "userPhonenumber", "userRole", "userEmail"],
+    });
+  res.status(200).json({
+    message: "Order status updated succesfully",
+    data: updatedOrder,
+  });
+};
 
 exports.deleteOrder = async (req, res) => {
   const { id } = req.params;
