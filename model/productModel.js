@@ -13,11 +13,11 @@ const productSchema = new Schema(
       required: [true, "Product Description must be provided!"],
     },
     productPrice: {
-      type: String,
+      type: Number,
       required: [true, "Product Price must be provided!"],
     },
     productStockQuantity: {
-      type: String,
+      type: Number,
       required: [true, "Product Stock Quantity must be provided!"],
     },
     productStatus: {

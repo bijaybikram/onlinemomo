@@ -1,4 +1,5 @@
 const Order = require("../../../model/orderSchema");
+const Product = require("../../../model/productModel");
 
 exports.getAllOrders = async (req, res) => {
   const orders = await Order.find()
@@ -77,19 +78,32 @@ exports.updateOrderStatus = async (req, res) => {
     .populate({
       path: "items.product",
       model: "Product",
-      select: [
-        "-productStockQuantity",
-        "-createdAt",
-        "-updatedAt",
-        "-__v",
-        "-reviews",
-      ],
+      select: ["-createdAt", "-updatedAt", "-__v", "-reviews"],
     })
     .populate({
       path: "user",
       model: "User",
       select: ["userName", "userPhonenumber", "userRole", "userEmail"],
     });
+
+  let necessaryData;
+  if (orderStatus === "delivered") {
+    necessaryData = updatedOrder?.items?.map((item) => {
+      return {
+        quantity: item.quantity,
+        productId: item.product._id,
+        productStockQty: item.product.productStockQuantity,
+      };
+    });
+  }
+
+  for (var i = 0; i < necessaryData?.length; i++) {
+    await Product.findByIdAndUpdate(necessaryData[i].productId, {
+      productStockQuantity:
+        necessaryData[i].productStockQty - necessaryData[i].quantity,
+    });
+  }
+
   res.status(200).json({
     message: "Order status updated succesfully",
     data: updatedOrder,
