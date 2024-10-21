@@ -109,6 +109,7 @@ exports.updateOrderStatus = async (req, res) => {
     data: updatedOrder,
   });
 };
+
 exports.updatePaymentStatus = async (req, res) => {
   const { id } = req.params;
   const { paymentStatus } = req.body;

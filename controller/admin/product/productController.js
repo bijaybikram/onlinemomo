@@ -136,6 +136,75 @@ exports.editProduct = async (req, res) => {
   });
 };
 
+// updating product status
+exports.updateProductStatus = async (req, res) => {
+  const { id } = req.params;
+  const { productStatus } = req.body;
+  if (
+    !productStatus ||
+    !["available", "unavailable"].includes(productStatus.toLowerCase())
+  ) {
+    return res.status(400).json({
+      message: "Please provide valid product status!",
+    });
+  }
+  // finding order
+  const product = await Product.findById(id);
+  if (!product) {
+    return res.status(404).json({
+      message: "The product with this Id donot exist!",
+    });
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    id,
+    { productStatus },
+    {
+      new: true,
+    }
+  );
+
+  res.status(200).json({
+    message: "Product status updated succesfully",
+    data: updatedProduct,
+  });
+};
+
+exports.updateProductStockAndPrice = async (req, res) => {
+  const { id } = req.params;
+  const { productStockQuantity, productPrice } = req.body;
+  if (!productStockQuantity && !productPrice) {
+    return res.status(400).json({
+      message: "Please provide valid product stockQty or price!",
+    });
+  }
+  // finding order
+  const product = await Product.findById(id);
+  if (!product) {
+    return res.status(404).json({
+      message: "The product with this Id donot exist!",
+    });
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    id,
+    {
+      productStockQuantity: productStockQuantity
+        ? productStockQuantity
+        : product.productStockQuantity,
+      productPrice: productPrice ? productPrice : product.productPrice,
+    },
+    {
+      new: true,
+    }
+  );
+
+  res.status(200).json({
+    message: "Product stock and price updated succesfully",
+    data: updatedProduct,
+  });
+};
+
 // API to get product reviews
 // exports.getProductReview = async (req, res) => {
 //   const productId = req.params.id;
