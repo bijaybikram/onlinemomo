@@ -32,7 +32,7 @@ exports.createProduct = async (req, res) => {
   }
 
   //   creating the product collection/table
-  await Product.create({
+  const productCreated = await Product.create({
     // since we are using the same variable names
     productName,
     productDescription,
@@ -43,6 +43,7 @@ exports.createProduct = async (req, res) => {
   });
   res.status(201).json({
     message: "Product created succesfully!",
+    data: productCreated,
   });
 };
 
