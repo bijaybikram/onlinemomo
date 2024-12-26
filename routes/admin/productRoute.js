@@ -4,6 +4,7 @@ const {
   editProduct,
   updateProductStatus,
   updateProductStockAndPrice,
+  getOrdersOfAProduct,
 } = require("../../controller/admin/product/productController");
 const {
   getProducts,
@@ -27,6 +28,10 @@ router
     catchAsync(createProduct)
   )
   .get(catchAsync(getProducts));
+
+router
+  .route("/productOrders/:id")
+  .get(isAuthenticated, restrictTo("admin"), catchAsync(getOrdersOfAProduct));
 
 router
   .route("/productstatus/:id")

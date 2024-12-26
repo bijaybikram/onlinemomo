@@ -1,3 +1,4 @@
+const Order = require("../../../model/orderSchema");
 const Product = require("../../../model/productModel");
 const fs = require("fs");
 
@@ -234,3 +235,32 @@ exports.updateProductStockAndPrice = async (req, res) => {
 //     });
 //   }
 // };
+
+// API to get all the orders of the product
+exports.getOrdersOfAProduct = async (req, res) => {
+  const { id: productId } = req.params;
+
+  if (!productId) {
+    res.status(400).json({
+      mesasge: "please provide the product id",
+    });
+  }
+
+  // Check if this product exist or not
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    return res.status(400).json({
+      message: "Product not found!",
+      data: { product: [] },
+    });
+  }
+
+  // Find all Orders made for this product
+  const orders = await Order.find({ "items.product": productId });
+
+  res.status(200).json({
+    message: "Orders fetched succesfully",
+    data: { orders },
+  });
+};
