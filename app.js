@@ -21,6 +21,7 @@ const cartRoute = require("./routes/user/cartRoute");
 const userOrderRoute = require("./routes/user/orderRoute");
 const adminOrderRoute = require("./routes/admin/orderRoute");
 const paymentRoute = require("./routes/user/paymentRoute");
+const dataServiceRoute = require("./routes/admin/dataServiceRoute");
 const User = require("./model/userModel");
 
 app.use(
@@ -46,6 +47,7 @@ connectDatabase(process.env.MONGO_URI);
 app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
 app.use("/api/admin", userRoute);
+app.use("/api/admin", dataServiceRoute);
 app.use("/api/reviews", userReviewRoute);
 app.use("/api/profile", profileRoute);
 app.use("/api/cart", cartRoute);
