@@ -4,7 +4,9 @@ const User = require("../../model/userModel");
 
 class DataService {
   async getData(req, res) {
+    const allUsers = await User.find();
     const users = (await User.find()).length;
+
     const products = (await Product.find()).length;
     const orders = (await Order.find()).length;
     const allOrders = await Order.find()
@@ -16,6 +18,7 @@ class DataService {
     res.status(200).json({
       message: "Data Fetched succesfully!",
       data: {
+        allUsers,
         users,
         products,
         orders,
