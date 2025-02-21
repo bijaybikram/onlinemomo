@@ -154,7 +154,7 @@ exports.verifyOtp = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { email, newPassword, confirmNewPassword } = req.body;
   if (!email || !newPassword || !confirmNewPassword) {
-    return req.status(400).json({
+    return res.status(400).json({
       message: "Please provide email, newpassword & confirmnewpassword.",
     });
   }
@@ -176,8 +176,8 @@ exports.resetPassword = async (req, res) => {
   }
 
   if (userExist[0].isOtpVerified !== true) {
-    return res.status(400).json({
-      message: "Password already changed!",
+    return res.status(403).json({
+      message: "Password already changed!You cannot perform this action",
     });
   }
   userExist[0].userPassword = bcrypt.hashSync(newPassword, 10);
