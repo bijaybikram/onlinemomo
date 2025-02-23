@@ -72,7 +72,10 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3001", "http://localhost:5173"],
+    origin: [
+      "https://onlinemomo-admin.vercel.app/",
+      "https://onlinemomo.vercel.app/",
+    ],
     methods: ["*"], // Define allowed methods
     credentials: true, // Allow credentials (if needed)
   },
